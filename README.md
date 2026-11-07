@@ -1,11 +1,12 @@
 # The Unleashed — portfolio
 
-Single-page portfolio for The Unleashed: character portraits, fan art and sketchbook work. Plain HTML, CSS and JavaScript, no build step. Open `index.html` or serve the folder.
+Site for The Unleashed: a hub with three doors (Chess, Code, Art), plus the art portfolio and portrait commissions. Plain HTML, CSS and JavaScript, no build step. Open `index.html` or serve the folder.
 
 ## Structure
 
 ```
-index.html        page content, including the full artwork index (#sheet)
+index.html        hub: three doors (Chess, Code, Art); chess and code link out to YouTube / Instagram
+art.html          art portfolio and commissions, including the full artwork index (#sheet)
 css/style.css     design tokens at the top (colours, type sizes, margins)
 js/script.js      entrances, sketchbook frame, filter, viewer
 art/Digital/      digital pieces, used directly by the page
@@ -17,11 +18,13 @@ art/profile.jpg   About photo
 ## Adding a piece
 
 1. Put the image in `art/Digital/` or `art/Traditional/`.
-2. Copy one `<li>` in `#sheet` in `index.html` and change its `data-*` fields:
+2. Copy one `<li>` in `#sheet` in `art.html` and change its `data-*` fields:
    `data-cat` is `fan`, `portrait`, `original`, `sketch` or `painting`; `data-yt` is the YouTube video id of the speedpaint (optional); `data-ig` is the Instagram post URL (optional); `data-note` is one line about the piece, shown in the viewer (optional).
-3. Update the counts on the filter buttons.
+3. Update the counts on the filter buttons and the total in the "Selected work" and "All work" text (currently 24).
 
 ## Oddly Us: weekly pages (no code, no commit)
+
+**Currently hidden** until Story 01 is out: the section is removed from `art.html`, the nav links are gone and `series.html` has `noindex`. To launch, restore the `oddly` section in `art.html` from commit `2a37af4`, add `Series` back to the nav/footer, and delete the `robots` meta in `series.html`.
 
 Series pages are uploaded through `/studio.html` and stored in Vercel Blob, not in this repo.
 
@@ -44,4 +47,8 @@ One-time setup in Vercel: Storage → create a Blob store with **public** access
 
 ## Contact
 
-Every contact button opens an Instagram DM through `https://ig.me/m/_._unleashed_._`. If the handle changes, search `index.html` for `ig.me/m/` and update each link.
+Every contact button opens an Instagram DM through `https://ig.me/m/_._unleashed_._`. If the handle changes, search all `.html` files for `ig.me/m/` and update each link.
+
+## Hub links
+
+The Chess and Code doors in `index.html` point at specific videos (thumbnails load from `i.ytimg.com/vi/<id>/…`). To feature a different video, swap the id in the door's image and links. The commission terms (5–7 days, three steps) live in the Commissions tab of `art.html`.
