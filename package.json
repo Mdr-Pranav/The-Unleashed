@@ -1,0 +1,12 @@
+{
+  "name": "the-unleashed-portfolio",
+  "private": true,
+  "type": "module",
+  "description": "Static portfolio. The only dependency is for the two series functions in /api.",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.8.2"
+  }
+}

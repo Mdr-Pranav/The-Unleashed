@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Studio — The Unleashed</title>
+  <meta name="theme-color" content="#161412">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%23161412'/><text x='32' y='50' font-family='Impact,sans-serif' font-size='48' text-anchor='middle' fill='%23f2a93b'>U</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .st { max-width: 880px; margin-inline: auto; padding: 48px var(--margin) var(--gap); display: grid; gap: 40px; }
+    .st [hidden] { display: none !important; }
+    .st-app { display: grid; gap: 40px; }
+    .st-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px 24px; }
+    .st-top .display { font-size: clamp(3rem, 2rem + 4vw, 5rem); }
+    .st-card { background: var(--surface); padding: 24px; display: grid; gap: 18px; }
+    .st-card h2 { font-family: var(--display); font-weight: 400; text-transform: uppercase; font-size: 1.75rem; line-height: 1; }
+    .st-help { color: var(--muted); font-size: var(--step-small); }
+    .st label { display: grid; gap: 6px; font-size: var(--step-small); font-weight: 600; }
+    .st input[type="text"], .st input[type="password"], .st textarea, .st select {
+      font: inherit; font-weight: 400; color: var(--ink); background: var(--bg);
+      border: 1px solid #3a352f; padding: 12px 14px; width: 100%; border-radius: 0;
+    }
+    .st textarea { min-height: 96px; resize: vertical; }
+    .st input:focus-visible, .st textarea:focus-visible, .st select:focus-visible { outline: 3px solid var(--accent); outline-offset: 0; }
+    .st-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .st-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+    .st .btn[disabled] { opacity: 0.5; pointer-events: none; }
+    .st-quiet { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+    .st-status { min-height: 1.5em; font-size: var(--step-small); color: var(--muted); }
+    .st-status.err { color: #ff8a7a; }
+    .st-status.ok { color: var(--accent); }
+    .st-drop {
+      display: grid; place-items: center; gap: 6px; text-align: center;
+      padding: 32px 16px; border: 2px dashed #4a443c; cursor: pointer;
+    }
+    .st-drop.over { border-color: var(--accent); }
+    .st-drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .st-pages { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+    .st-pages li { position: relative; background: var(--bg); }
+    .st-pages img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; object-position: top; }
+    .st-pages span { position: absolute; left: 6px; top: 6px; background: rgb(0 0 0 / 0.7); padding: 2px 8px; font-size: 0.8rem; font-weight: 600; }
+    .st-pages button { width: 100%; padding: 8px; font-size: 0.85rem; font-weight: 600; color: var(--muted); }
+    .st-pages button:hover { color: #ff8a7a; }
+    @media (max-width: 560px) { .st-row { grid-template-columns: 1fr; } .st-card { padding: 18px; } }
+  </style>
+</head>
+<body>
+  <main class="st">
+    <div class="st-top">
+      <h1 class="display">Studio</h1>
+      <p class="st-acts"><a class="st-quiet" href="series.html" target="_blank" rel="noopener">Open the series page</a> <button type="button" class="st-quiet" id="logout" hidden>Sign out</button></p>
+    </div>
+
+    <!-- 1. password -->
+    <form class="st-card" id="login">
+      <h2>Sign in</h2>
+      <label>Studio password
+        <input type="password" id="password" autocomplete="current-password" required>
+      </label>
+      <div class="st-acts"><button class="btn" type="submit">Sign in</button></div>
+      <p class="st-status" id="login-status" role="status"></p>
+    </form>
+
+    <div id="app" class="st-app" hidden>
+      <!-- 2. which story -->
+      <section class="st-card">
+        <h2>Story</h2>
+        <div class="st-row">
+          <label>Type
+            <select id="kind">
+              <option value="story">Story (pages)</option>
+              <option value="scroll">Scroll (one long strip)</option>
+            </select>
+          </label>
+          <label>Number
+            <select id="number"></select>
+          </label>
+        </div>
+        <p class="st-help" id="story-info"></p>
+      </section>
+
+      <!-- 3. this week's pages -->
+      <section class="st-card">
+        <h2>Add this week's pages</h2>
+        <label class="st-drop" id="drop">
+          <strong>Choose or drop images</strong>
+          <span class="st-help">JPG or PNG, full size is fine. They're resized here before uploading, and added after the pages already in the story, sorted by file name.</span>
+          <input type="file" id="files" accept="image/jpeg,image/png,image/webp" multiple>
+        </label>
+        <div class="st-acts">
+          <button class="btn" type="button" id="upload" disabled>Upload</button>
+          <span class="st-help" id="picked"></span>
+        </div>
+        <p class="st-status" id="upload-status" role="status"></p>
+      </section>
+
+      <!-- 4. title and blurb -->
+      <form class="st-card" id="meta">
+        <h2>Title and description</h2>
+        <label>Title <input type="text" id="title" maxlength="120" placeholder="e.g. The Lift"></label>
+        <label>One or two lines about the story <textarea id="blurb" maxlength="600"></textarea></label>
+        <div class="st-acts"><button class="btn" type="submit">Save</button></div>
+        <p class="st-status" id="meta-status" role="status"></p>
+      </form>
+
+      <!-- 5. pages already up -->
+      <section class="st-card">
+        <h2>Pages online</h2>
+        <ol class="st-pages" id="pages"></ol>
+        <p class="st-status" id="pages-status" role="status"></p>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/studio.js" defer></script>
+</body>
+</html>

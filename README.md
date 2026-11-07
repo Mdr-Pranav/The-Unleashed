@@ -1,71 +1,47 @@
-# Art Portfolio Website
+# The Unleashed — portfolio
 
-A responsive, dark-themed art portfolio website to showcase digital and traditional artwork with stunning animations and popup gallery.
+Single-page portfolio for The Unleashed: character portraits, fan art and sketchbook work. Plain HTML, CSS and JavaScript, no build step. Open `index.html` or serve the folder.
 
-## Features
-
-- **Dark Theme**: Beautiful dark design with subtle animations
-- **Responsive Design**: Looks great on all devices - mobile, tablet, and desktop
-- **Art Galleries**: Separate sections for digital and traditional art
-- **Popup Gallery**: Click on any artwork to view it in a larger popup with details
-- **Animation Effects**: Smooth reveal animations as you scroll
-- **Interactive Elements**: Hover effects, smooth scrolling, and more
-- **Contact Form**: Easy way for visitors to get in touch
-- **Social Media Links**: Connect with visitors on various platforms
-
-## Project Structure
+## Structure
 
 ```
-├── index.html          # Main HTML file
-├── css/
-│   └── style.css       # Main stylesheet with dark theming
-├── js/
-│   └── script.js       # JavaScript functionality and animations
-└── art/                # Art directories
-    ├── digital/        # Upload digital art here
-    └── traditional/    # Upload traditional art here
+index.html        page content, including the full artwork index (#sheet)
+css/style.css     design tokens at the top (colours, type sizes, margins)
+js/script.js      entrances, sketchbook frame, filter, viewer
+art/Digital/      digital pieces, used directly by the page
+art/Traditional/  sketchbook photos, used directly by the page
+art/painting/     paintings, used directly by the page
+art/profile.jpg   About photo
 ```
 
-## How to Use
+## Adding a piece
 
-1. **Upload Your Art**:
+1. Put the image in `art/Digital/` or `art/Traditional/`.
+2. Copy one `<li>` in `#sheet` in `index.html` and change its `data-*` fields:
+   `data-cat` is `fan`, `portrait`, `original`, `sketch` or `painting`; `data-yt` is the YouTube video id of the speedpaint (optional); `data-ig` is the Instagram post URL (optional); `data-note` is one line about the piece, shown in the viewer (optional).
+3. Update the counts on the filter buttons.
 
-   - Place your digital artwork in the `art/digital/` directory
-   - Place your traditional artwork in the `art/traditional/` directory
+## Oddly Us: weekly pages (no code, no commit)
 
-2. **Customize the Website**:
+Series pages are uploaded through `/studio.html` and stored in Vercel Blob, not in this repo.
 
-   - Edit the HTML to update your personal information
-   - Modify the styling in CSS if you want to change colors or animations
-   - Update social media links in the HTML file
+1. Open `https://<your-site>/studio.html` and enter the studio password.
+2. Pick the story (e.g. Story 01), choose this week's images and press Upload. They're resized in the browser and added after the existing pages, sorted by file name (`01.jpg`, `02.jpg`…).
+3. The series page and `story.html?s=story-01` show them within about 5 minutes.
 
-3. **View Your Portfolio**:
-   - Open `index.html` in a web browser to see your portfolio
-   - Click on any image to view it in a popup gallery
+When a story ends, pick Story 02 and carry on. A story's card on `series.html` stays "Coming soon" until it has pages. "Scroll" stories are for one long vertical strip; their panels are stacked without gaps.
 
-## Technical Details
+How it fits together:
 
-- Built with pure HTML, CSS, and JavaScript (no frameworks)
-- Uses CSS variables for easy theming
-- Implements CSS animations and transitions for visual effects
-- Implements Intersection Observer API for scroll animations
-- Dynamically loads artwork from specified folders
-- Features interactive popup gallery for viewing artwork
+```
+studio.html, js/studio.js   upload page (not linked anywhere, noindex)
+api/studio.js               checks STUDIO_PASSWORD, saves / deletes pages in Blob
+api/series.js               public list of stories and pages, cached 5 minutes
+js/series.js, story.html    series cards and the reading page
+```
 
-## Customization
+One-time setup in Vercel: Storage → create a Blob store with **public** access and connect it to this project (adds `BLOB_READ_WRITE_TOKEN`), then add an environment variable `STUDIO_PASSWORD` (12+ characters) and redeploy.
 
-You can easily customize the website by:
+## Contact
 
-- Changing the color scheme in the CSS variables (in `css/style.css`)
-- Updating your personal information in the About section
-- Adding or removing sections as needed
-- Customizing the animations and transitions
-
-## Browser Support
-
-This website works in all modern browsers, including:
-
-- Chrome
-- Firefox
-- Safari
-- Edge
+Every contact button opens an Instagram DM through `https://ig.me/m/_._unleashed_._`. If the handle changes, search `index.html` for `ig.me/m/` and update each link.
