@@ -27,7 +27,7 @@ Series pages are uploaded through `/studio.html` and stored in Vercel Blob, not 
 
 1. Open `https://<your-site>/studio.html` and enter the studio password.
 2. Pick the story (e.g. Story 01), choose this week's images and press Upload. They're resized in the browser and added after the existing pages, sorted by file name (`01.jpg`, `02.jpg`…).
-3. The series page and `story.html?s=story-01` show them within about 5 minutes.
+3. The series page and `story.html?s=story-01` show them within about a minute.
 
 When a story ends, pick Story 02 and carry on. A story's card on `series.html` stays "Coming soon" until it has pages. "Scroll" stories are for one long vertical strip; their panels are stacked without gaps.
 
@@ -36,7 +36,7 @@ How it fits together:
 ```
 studio.html, js/studio.js   upload page (not linked anywhere, noindex)
 api/studio.js               checks STUDIO_PASSWORD, saves / deletes pages in Blob
-api/series.js               public list of stories and pages, cached 5 minutes
+api/series.js               public list of stories and pages, cached about a minute
 js/series.js, story.html    series cards and the reading page
 ```
 

@@ -1,5 +1,5 @@
 // GET /api/series — every story in Blob storage, with its panels in reading order.
-// Public and cached for a few minutes. The studio adds ?fresh=1 plus the password to skip the cache.
+// Public and cached for about a minute. The studio adds ?fresh=1 plus the password to skip the cache.
 import { list } from '@vercel/blob';
 import { SLUG, isAdmin, send, explain } from './_lib.js';
 
@@ -69,7 +69,8 @@ export default async function handler(req, res) {
       res,
       200,
       { stories: out },
-      fresh ? 'no-store' : 'public, max-age=0, s-maxage=300, stale-while-revalidate=86400'
+      // short edge cache: changes from the studio show up within about a minute
+      fresh ? 'no-store' : 'public, max-age=0, s-maxage=60, stale-while-revalidate=30'
     );
   } catch (err) {
     console.error(err);

@@ -101,6 +101,8 @@
     $('#story-info').textContent = s && s.panels.length
       ? `${name} has ${s.panels.length} page${s.panels.length === 1 ? '' : 's'} online. Last added ${new Date(s.updatedAt).toLocaleDateString()}.`
       : `${name} has no pages yet. Its card on the series page says "Coming soon" until you upload some.`;
+    // shown whenever anything is stored for this story, pages or just a title
+    $('#delete-story').hidden = !(s && (s.panels.length || s.title || s.blurb));
     $('#title').value = s ? s.title : '';
     $('#blurb').value = s ? s.blurb : '';
     status('#meta-status', '');
@@ -132,7 +134,7 @@
     try {
       await api('meta', { story: slug() }, JSON.stringify({ title: $('#title').value.trim(), blurb: $('#blurb').value.trim() }));
       await refresh();
-      status('#meta-status', 'Saved. The public page shows it within about 5 minutes.', 'ok');
+      status('#meta-status', 'Saved. The public page shows it within about a minute.', 'ok');
     } catch (err) {
       status('#meta-status', err.message, 'err');
     }
@@ -216,7 +218,7 @@
       $('#files').value = '';
       pick([]);
       await refresh();
-      status('#upload-status', `Done: ${done} page${done === 1 ? '' : 's'} added. The public page shows them within about 5 minutes.`, 'ok');
+      status('#upload-status', `Done: ${done} page${done === 1 ? '' : 's'} added. The public page shows them within about a minute.`, 'ok');
     } catch (err) {
       status('#upload-status', `${err.message}${done ? ` (${done} uploaded before this, they're online.)` : ''}`, 'err');
       $('#upload').disabled = !picked.length;
@@ -224,14 +226,32 @@
     }
   });
 
-  /* ---------- delete ---------- */
+  /* ---------- delete the whole story ---------- */
+  $('#delete-story').addEventListener('click', async () => {
+    const s = current();
+    if (!s) return;
+    const name = `${s.kind === 'scroll' ? 'Scroll' : 'Story'} ${String(s.number).padStart(2, '0')}`;
+    const what = [s.panels.length && `${s.panels.length} page${s.panels.length === 1 ? '' : 's'}`, (s.title || s.blurb) && 'its title and description']
+      .filter(Boolean).join(' and ');
+    if (!confirm(`Delete ${name}${s.title ? ` (“${s.title}”)` : ''}?\n\nThis removes ${what}. It can't be undone.`)) return;
+    status('#story-status', `Deleting ${name}…`);
+    try {
+      await api('delete-story', { story: s.slug });
+      await refresh();
+      status('#story-status', `${name} deleted. Its card on the series page goes back to "Coming soon" within about a minute.`, 'ok');
+    } catch (err) {
+      status('#story-status', err.message, 'err');
+    }
+  });
+
+  /* ---------- delete one page ---------- */
   async function remove(p, n) {
     if (!confirm(`Delete page ${n}? This can't be undone.`)) return;
     status('#pages-status', `Deleting page ${n}…`);
     try {
       await api('delete', {}, JSON.stringify({ url: p.url }));
       await refresh();
-      status('#pages-status', `Page ${n} deleted.`, 'ok');
+      status('#pages-status', `Page ${n} deleted. The title, description and other pages are untouched. The public page catches up within about a minute.`, 'ok');
     } catch (err) {
       status('#pages-status', err.message, 'err');
     }

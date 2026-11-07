@@ -1,6 +1,13 @@
 // Shared helpers for the series functions. Files starting with "_" are not routes on Vercel.
 import { createHash, timingSafeEqual } from 'node:crypto';
 
+// Vercel lets you add a custom prefix when connecting a store (e.g. ART_READ_WRITE_TOKEN);
+// the Blob library only reads BLOB_READ_WRITE_TOKEN, so map a prefixed one onto it.
+if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  const key = Object.keys(process.env).find((k) => /READ_WRITE_TOKEN$/.test(k) && /^vercel_blob_rw_/.test(process.env[k] || ''));
+  if (key) process.env.BLOB_READ_WRITE_TOKEN = process.env[key];
+}
+
 // story-01 … story-99, scroll-01 … scroll-99
 export const SLUG = /^(story|scroll)-(\d{2})$/;
 

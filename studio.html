@@ -31,6 +31,7 @@
     .st-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
     .st .btn[disabled] { opacity: 0.5; pointer-events: none; }
     .st-quiet { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+    .st-danger { color: #ff8a7a; justify-self: start; }
     .st-status { min-height: 1.5em; font-size: var(--step-small); color: var(--muted); }
     .st-status.err { color: #ff8a7a; }
     .st-status.ok { color: var(--accent); }
@@ -82,6 +83,10 @@
           </label>
         </div>
         <p class="st-help" id="story-info"></p>
+        <div class="st-acts">
+          <button type="button" class="st-quiet st-danger" id="delete-story" hidden>Delete this story</button>
+        </div>
+        <p class="st-status" id="story-status" role="status"></p>
       </section>
 
       <!-- 3. this week's pages -->

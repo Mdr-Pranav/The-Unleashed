@@ -3,7 +3,8 @@
 //   action=upload&story=story-01&order=…&w=…&h=…   → body: one JPEG panel (already resized in the browser)
 //   action=meta&story=story-01                     → body: {"title": "...", "blurb": "..."}
 //   action=delete                                  → body: {"url": "<panel url>"}
-import { put, del } from '@vercel/blob';
+//   action=delete-story&story=story-01             → removes all its pages, title and description
+import { put, del, list } from '@vercel/blob';
 import { SLUG, isAdmin, send, readBody, explain } from './_lib.js';
 
 const MAX_PANEL = 4 * 1024 * 1024; // Vercel functions accept up to 4.5 MB per request
@@ -62,6 +63,20 @@ export default async function handler(req, res) {
         if (!ours) return send(res, 400, { error: 'Only series panels can be deleted' });
         await del(url);
         return send(res, 200, { ok: true });
+      }
+
+      case 'delete-story': {
+        // every file in the story's folder: pages, title and description
+        if (!SLUG.test(q.story || '')) return send(res, 400, { error: 'Unknown story' });
+        const urls = [];
+        let cursor;
+        do {
+          const page = await list({ prefix: `series/${q.story}/`, cursor, limit: 1000 });
+          urls.push(...page.blobs.map((b) => b.url));
+          cursor = page.hasMore ? page.cursor : undefined;
+        } while (cursor);
+        if (urls.length) await del(urls);
+        return send(res, 200, { deleted: urls.length });
       }
 
       default:

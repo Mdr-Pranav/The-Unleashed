@@ -56,6 +56,8 @@
       if (!list) return;
       const slot = list.children[s.number - 1];
       const live = card(s);
+      // a cover that won't load (e.g. a page deleted moments ago) puts the "Coming soon" card back
+      $('.story-img', live).addEventListener('error', () => (slot ? live.replaceWith(slot) : live.remove()), { once: true });
       if (slot) slot.replaceWith(live);
       else list.append(live);
     });
@@ -93,6 +95,7 @@
       img.alt = `${name}, ${s.kind === 'scroll' ? 'part' : 'page'} ${i + 1} of ${s.panels.length}`;
       img.loading = i < 2 ? 'eager' : 'lazy';
       img.decoding = 'async';
+      img.addEventListener('error', () => img.remove(), { once: true }); // a page deleted moments ago
       holder.append(img);
     });
     const end = el('p', 'reader-end', s.updatedAt && Date.now() - new Date(s.updatedAt) < WEEK
