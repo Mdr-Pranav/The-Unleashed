@@ -1,7 +1,7 @@
 // GET /api/series — every story in Blob storage, with its panels in reading order.
 // Public and cached for a few minutes. The studio adds ?fresh=1 plus the password to skip the cache.
 import { list } from '@vercel/blob';
-import { SLUG, isAdmin, send } from './_lib.js';
+import { SLUG, isAdmin, send, explain } from './_lib.js';
 
 // series/story-01/p-1762500000000-003-1600x2400.jpg
 const PANEL = /^series\/((?:story|scroll)-\d{2})\/p-(\d{13}-\d{3})-(\d+)x(\d+)\.jpg$/;
@@ -73,6 +73,6 @@ export default async function handler(req, res) {
     );
   } catch (err) {
     console.error(err);
-    return send(res, 500, { error: 'Could not read the series' });
+    return send(res, 500, { error: fresh ? explain(err) : 'Could not read the series' });
   }
 }

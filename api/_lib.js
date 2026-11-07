@@ -20,6 +20,21 @@ export function send(res, status, body, cache = 'no-store') {
   res.end(JSON.stringify(body));
 }
 
+// Turns a storage error into a message the studio can act on.
+export function explain(err) {
+  const msg = String((err && err.message) || err);
+  if (!process.env.BLOB_READ_WRITE_TOKEN && !process.env.BLOB_STORE_ID) {
+    return 'No Blob store is connected to this project. Vercel → Storage → connect the Blob store to this project, then redeploy.';
+  }
+  if (/private/i.test(msg) && /public/i.test(msg)) {
+    return 'The Blob store is set to Private. Create a new Blob store with Public access, connect it, and redeploy.';
+  }
+  if (/not.?found|does not exist|suspended/i.test(msg)) {
+    return `The Blob store can't be reached (${msg}). Reconnect it in Vercel → Storage and redeploy.`;
+  }
+  return `Storage error: ${msg}`;
+}
+
 export async function readBody(req, limit) {
   const chunks = [];
   let size = 0;

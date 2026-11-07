@@ -4,7 +4,7 @@
 //   action=meta&story=story-01                     → body: {"title": "...", "blurb": "..."}
 //   action=delete                                  → body: {"url": "<panel url>"}
 import { put, del } from '@vercel/blob';
-import { SLUG, isAdmin, send, readBody } from './_lib.js';
+import { SLUG, isAdmin, send, readBody, explain } from './_lib.js';
 
 const MAX_PANEL = 4 * 1024 * 1024; // Vercel functions accept up to 4.5 MB per request
 
@@ -69,6 +69,7 @@ export default async function handler(req, res) {
     }
   } catch (err) {
     console.error(err);
-    return send(res, err.status || 500, { error: err.status ? err.message : 'Something went wrong' });
+    // only reached with the right password, so the real reason is safe to show
+    return send(res, err.status || 500, { error: err.status ? err.message : explain(err) });
   }
 }

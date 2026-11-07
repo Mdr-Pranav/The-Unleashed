@@ -35,7 +35,10 @@
   async function refresh() {
     const r = await fetch('/api/series?fresh=1', { headers: { 'x-studio-password': password } });
     if (r.status === 401) signOut('Wrong password.');
-    if (!r.ok) throw new Error(`Could not load the series (${r.status})`);
+    if (!r.ok) {
+      const data = await r.json().catch(() => ({}));
+      throw new Error(data.error || `Could not load the series (${r.status})`);
+    }
     stories = (await r.json()).stories || [];
     show();
   }
